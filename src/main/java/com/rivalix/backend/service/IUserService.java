@@ -7,4 +7,6 @@ public interface IUserService {
     UserResponse userCreate (UserRequest userRequest);
     UserResponse login (UserRequest userRequest);
     UserResponse getUserById(Long id);
+    UserResponse updateUser(Long id,UserRequest userRequest);
+    void deleteUser(Long id);
 }

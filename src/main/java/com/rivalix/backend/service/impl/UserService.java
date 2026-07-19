@@ -33,14 +33,37 @@ public class UserService implements IUserService{
 
     @Override
     public UserResponse login(UserRequest userRequest) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'login'");
+        User user = userRepository.findByEmail(userRequest.getEmail())
+        .orElseThrow(()-> new RuntimeException("Correo no registrado"));
+        if (!passwordEncoder.matches(userRequest.getPassword() , user.getPassword())) {
+            throw new RuntimeException("Contraseña incorresta");
+        }
+        return userMapper.toDTO(user);
     }
 
     @Override
     public UserResponse getUserById(Long id) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getUserById'");
+        User user = userRepository.findById(id)
+        .orElseThrow(()-> new RuntimeException("Usuario no encontrado"));
+        return userMapper.toDTO(user);
+    }
+
+    @Override
+    public UserResponse updateUser(Long id,UserRequest userRequest) {
+        User user = userRepository.findById(id)
+        .orElseThrow(()-> new RuntimeException("Usuario no encontrado"));
+        user.setEmail(userRequest.getEmail());
+
+        User update = userRepository.save(user);
+        return userMapper.toDTO(update);
+    }
+
+    @Override
+    public void deleteUser(Long id) {
+       if (!userRepository.existsById(id)) {
+        throw new RuntimeException("Usuario no encontrado");
+       }
+        userRepository.deleteById(id);
     }
     
 }
